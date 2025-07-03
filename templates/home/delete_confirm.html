@@ -1,0 +1,12 @@
+{% extends 'home/base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border dark:border-gray-600 rounded shadow">
+  <h2 class="text-xl font-bold mb-4">Delete Note</h2>
+  <p>Are you sure you want to delete <strong>{{ note.title }}</strong>?</p>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded mt-4 hover:bg-red-700">Delete</button>
+    <a href="{% url 'home' %}" class="ml-4 text-blue-600 dark:text-blue-400 hover:underline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

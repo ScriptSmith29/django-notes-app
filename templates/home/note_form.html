@@ -1,0 +1,87 @@
+{% extends 'home/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="max-w-xl mx-auto mt-10 bg-white dark:bg-gray-800 p-6 rounded shadow">
+  <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Note</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% with class_list="w-full p-2 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-800 dark:text-gray-200">Title:</label>
+      {{ form.title|add_class:class_list }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-800 dark:text-gray-200">Content:</label>
+      {{ form.content|add_class:class_list }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-800 dark:text-gray-200">Attachment:</label>
+      {{ form.attachment }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-800 dark:text-gray-200">Important:</label>
+      {{ form.is_important }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-800 dark:text-gray-200">Select Tags:</label>
+      {{ form.tags }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-800 dark:text-gray-200">Add New Tags:</label>
+      {{ form.new_tags|add_class:class_list }}
+    </div>
+
+    {% endwith %}
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+      Save
+    </button>
+  </form>
+</div>
+   <script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+  tinymce.init({
+    selector: '#id_content',
+    height: 400,
+    menubar: false,
+    plugins: 'lists link image media paste',
+    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media',
+    branding: false,
+    skin: document.documentElement.classList.contains('dark') ? 'oxide-dark' : 'oxide',
+    content_css: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+
+    images_upload_url: '/upload/',  // Django view to handle uploads
+    automatic_uploads: true,
+    images_upload_credentials: true,
+
+    file_picker_types: 'image media',
+    file_picker_callback: function(callback, value, meta) {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', meta.filetype === 'image' ? 'image/*' : 'video/*');
+      input.onchange = function() {
+        const file = this.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/upload/', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => callback(data.location))
+        .catch(() => alert("Upload failed"));
+      };
+      input.click();
+    }
+  });
+</script>
+{% endblock %}

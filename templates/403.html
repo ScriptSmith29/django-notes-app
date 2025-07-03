@@ -1,0 +1,9 @@
+{% extends "home/base.html" %}
+{% block content %}
+  <div class="text-center py-10">
+    <h1 class="text-3xl font-bold">403 - Forbidden</h1>
+    <p class="mt-4">Access Denied, You don’t have permission to access this page.
+        Please check with the site administrator if you believe this is an error.</p>
+    <a href="{% url 'home' %}" class="text-blue-600 underline mt-4 inline-block">Go to homepage</a>
+  </div>
+{% endblock %}
